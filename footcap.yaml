@@ -1,0 +1,47 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: footcap
+spec:
+  selector:
+    matchLabels:
+      run: footcap-pod
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        run: footcap-pod
+    spec:
+      containers:
+        - name: footcap-container
+          image: 553041437467.dkr.ecr.us-east-1.amazonaws.com/footcap:latest
+          ports:
+            - containerPort: 80
+#          env:
+#            - name: USER_UID
+#              value: "1000"
+#            - name: USER_GID
+#              value: "1000"
+#          volumeMounts:
+#            - name: footcap-storage
+#              mountPath: /data
+#      volumes:
+#        - name: footcap-storage
+#          emptyDir: {}
+      restartPolicy: Always
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: footcap-service
+  labels:
+    run: footcap-pod
+spec:
+  type: NodePort
+  ports:
+    - port: 80
+      protocol: TCP
+      targetPort: 80
+      nodePort: 30001
+
